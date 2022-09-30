@@ -56,7 +56,7 @@ app.mount("#app");
 Component can be used anywhere in the app now
 
 ```html
-<animate-in-view animation="fadeInSlide">
+<animate-in-view animation="'fadeInSlide'">
   <div class="w-1/2 h-96 bg-red-500 mx-auto"></div>
 </animate-in-view>
 ```
@@ -97,6 +97,12 @@ Pass the desired class as a string literal (in single quotes) in your `Vue` temp
 
 ```html
 <div v-animate-inview="'fade'">Animate me once upon scroll</div>
+```
+
+You may also pass the animation name as part of an object
+
+```html
+<div v-animate-inview="{animation:'fade'}">Animate me once upon scroll</div>
 ```
 
 ### Scroll Direction
@@ -210,6 +216,42 @@ Note that by providing both `up` and `down` directions,
 **_Directive:_** the `repeat` modifier is implicitly set.
 
 **_Component:_** value of `repeat` prop is set to true implicitly
+
+### Intersection Observer Options
+
+To configure when the animation is triggered from the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API), you may also pass the IntersectionObserver's options to the animation object's `options` property.
+
+**_Directive:_** pass the value as object
+
+**_Component:_** pass an object to the `animation` prop.
+
+```html
+<!-- Directive -->
+<div v-animate-inview="{animation: 'fade', options:{rootMargin:'0px',threshold: 1.0}}">
+  Animation will be triggered once when the options for the intersection observer are met.
+</div>
+
+<!-- Component -->
+<animate-in-view :animation="{animation: 'fade', options:{rootMargin:'0px',threshold: 1.0}}">
+  <div>
+    Animation will be triggered once when the options for the intersection observer are met.
+  </div>
+</animate-in-view>
+```
+
+```html
+<!-- Directive -->
+<div v-animate-inview="{down: 'fade', up: 'fadeInSlide', options:{rootMargin:'0px',threshold: 1.0}}">
+  Animation will be triggered whenever element enters the viewport, scrolling in any direction when the options for the intersection observer are met.
+</div>
+
+<!-- Component -->
+<animate-in-view :animation="{down: 'fade', up: 'fadeInSlide', options:{rootMargin:'0px',threshold: 1.0}}">
+  <div>
+    Animation will be triggered whenever element enters the viewport, scrolling in any direction when the options for the intersection observer are met.
+  </div>
+</animate-in-view>
+```
 
 <!-- ## Demo -->
 

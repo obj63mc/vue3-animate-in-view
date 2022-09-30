@@ -13,11 +13,13 @@ function observeElement(
   isInView: Ref<boolean>,
   isIntersectingFn: intersectionCallback,
   options?: IntersectionObserverInit
-): void {
+): IntersectionObserver {
     console.log(element)
+
   const handleIntersection = intersectionHandler(isIntersectingFn, isInView)
   const observer = new IntersectionObserver(handleIntersection, options)
   observer.observe(element)
+  return observer;
 }
 
 export default { observeElement }

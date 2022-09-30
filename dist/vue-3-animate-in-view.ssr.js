@@ -8,6 +8,7 @@ function observeElement(element, isInView, isIntersectingFn, options) {
   const handleIntersection = intersectionHandler(isIntersectingFn, isInView);
   const observer = new IntersectionObserver(handleIntersection, options);
   observer.observe(element);
+  return observer;
 }
 
 var useIntersectionObserver = {
@@ -52,10 +53,23 @@ var useScrollObserver = {
     }
 
     if (typeof animation === 'object') {
-      _animationClass = scrollDirection.value === 'down' ? animation.down : animation.up;
+      if (isBiDirectional()) {
+        _animationClass = scrollDirection.value === 'down' ? animation.down : animation.up;
+      } else {
+        _animationClass = animation.animation;
+      }
     }
 
     return _animationClass;
+  });
+  const intersectionOptions = vue.computed(() => {
+    let _intersectionOptions = {};
+
+    if (typeof animation === 'object') {
+      _intersectionOptions = animation.options;
+    }
+
+    return _intersectionOptions;
   });
 
   const scrollCallback = (lastScrollTop, currentScrollTop) => {
@@ -74,19 +88,25 @@ var useScrollObserver = {
   };
 
   const isDirectionAgnostic = () => {
-    return typeof animation === 'string';
+    return typeof animation === 'string' || !isBiDirectional();
   };
 
   const isBiDirectional = () => {
-    return !!(typeof animation === 'object' && animation.up !== '' && animation.down !== '');
+    return !!(typeof animation === 'object' && animation.up && animation.down);
   };
 
-  useIntersectionObserver.observeElement(el, isInView, intersectCallback);
+  const observer = useIntersectionObserver.observeElement(el, isInView, intersectCallback, intersectionOptions.value);
   useScrollObserver.detectScrollDirection(scrollCallback);
-  vue.watch([isInView, scrollDirection], (newValues, previousValues) => {
+  vue.watch([isInView, scrollDirection], newValues => {
     const [isInView, scrollDirection] = newValues;
 
     if (!repeat && isDirectionAgnostic()) {
+
+      if (isInView) {
+        observer.unobserve(el);
+        cleanup();
+      }
+
       return;
     } else if (!isInView) {
       el.classList.remove(animationClass.value);

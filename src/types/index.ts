@@ -1,7 +1,9 @@
-
+import { Ref } from "vue"
 export interface AnimationParams extends Object{
-    up: string
+    animation?: string
+    up?: string
     down?: string
+    options?: object
 }
 
 export declare type intersectionCallback = (entry: IntersectionObserverEntry, isInView: Ref<boolean>) => void
